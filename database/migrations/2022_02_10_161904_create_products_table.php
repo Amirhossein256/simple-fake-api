@@ -18,8 +18,9 @@ return new class extends Migration
             $table->string('title');
             $table->string('description');
             $table->integer('price');
-            $table->integer('starphp');
-            $table->timestamps();
+            $table->integer('star');
+            $table->dateTime('created_at')->useCurrent();
+            $table->dateTime('updated_at')->nullable()->useCurrentOnUpdate();
         });
     }
 
