@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\product;
+use App\Http\Resources\ProductResource;
 use App\Repositories\ProductRepository;
 use Illuminate\Http\Request;
 
@@ -23,13 +23,13 @@ class productController extends Controller
      */
     public function index()
     {
-        return $this->productRepository->getAllProduct();
+        return ProductResource::collection($this->productRepository->getAllProduct());
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -41,25 +41,25 @@ class productController extends Controller
             'star' => 'required|int'
         ]);
 
-        return $this->productRepository->insertProduct($validateData);
+        return new ProductResource($this->productRepository->insertProduct($validateData));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
 
-       return $this->productRepository->getOneProduct($id);
+        return new ProductResource($this->productRepository->getOneProduct($id));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @param int $id
      * @return \Illuminate\Http\Response
      */
@@ -72,13 +72,13 @@ class productController extends Controller
             'star' => 'required|int'
         ]);
 
-        return $this->productRepository->updateProduct($id, $validateData);
+        return new ProductResource($this->productRepository->updateProduct($id, $validateData));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
