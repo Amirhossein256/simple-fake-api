@@ -3,10 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\product;
+use App\Repositories\ProductRepository;
 use Illuminate\Http\Request;
 
 class productController extends Controller
 {
+
+    private ProductRepository $productRepository;
+
+    public function __construct()
+    {
+        $this->productRepository = new ProductRepository();
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +23,7 @@ class productController extends Controller
      */
     public function index()
     {
-        return product::all();
+        return $this->productRepository->getAllProduct();
     }
 
     /**
@@ -25,14 +34,14 @@ class productController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validateData = $request->validate([
             'description' => 'required',
             'title' => 'required',
             'price' => 'required',
-            'star' => 'required'
+            'star' => 'required|int'
         ]);
 
-        return product::create($request->all());
+        return $this->productRepository->insertProduct($validateData);
     }
 
     /**
@@ -43,27 +52,27 @@ class productController extends Controller
      */
     public function show($id)
     {
-       return product::findOrfail($id);
+
+       return $this->productRepository->getOneProduct($id);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
-        $request->validate([
+        $validateData = $request->validate([
             'description' => 'required',
             'title' => 'required',
             'price' => 'required',
-            'star' => 'required'
+            'star' => 'required|int'
         ]);
-        $data = product::findOrfail($id);
-        $data->update($request->all());
-        return $data;
+
+        return $this->productRepository->updateProduct($id, $validateData);
     }
 
     /**
@@ -74,8 +83,7 @@ class productController extends Controller
      */
     public function destroy($id)
     {
-        $data = product::findOrfail($id);
-        $data->delete();
-        return response($data, 204);
+
+        return response($this->productRepository->deleteProduct($id), 204);
     }
 }
